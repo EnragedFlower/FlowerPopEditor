@@ -134,7 +134,15 @@ void pop::Load(std::ifstream& file, bool echo) {
 
 		if (identifier == "culture") culture = token;
 		else if (identifier == "religion") religion = token;
-		else if (identifier == "size") size = stoi(token);
+		else if (identifier == "size") {
+			try {
+				size = stoi(token);
+			}
+			catch (const std::exception& e) {
+				std::cout << "ERROR: standard exception in\nLine: " << line << "\nWhile trying to load pop data.\n";
+				std::cout << "Exception: " << e.what();
+			}
+		}
 		else if (token == "{") type = identifier;
 	}
 }

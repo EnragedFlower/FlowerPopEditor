@@ -134,8 +134,15 @@ void load_province_info(const std::string& path) {
 
 	filename.erase(0, filename.find_last_of("\\") + 1);
 	filename = filename.substr(0, filename.find_first_of(" -"));
-
-	short unsigned int id = stoi(filename);
+	
+	short unsigned int id;
+	try {
+		id = stoi(filename);
+	}
+	catch (const std::exception& e) {
+		std::cout << "ERROR: standard exception in\n" << path << "\nWhile trying to convert file name to province ID.\n";
+		std::cout << "Exception: " << e.what();
+	}
 
 	int index = 0;
 	for (int i = 0; i < provincelist.size(); i++) {
@@ -174,8 +181,17 @@ void load_pops_from_files(const std::string& popfile_path) {
 
 		if (token == "{" && indent == 1) {
 
+			int provinceid;
+			try {
+				provinceid = stoi(identifier);
+			}
+			catch (const std::exception& e) {
+				std::cout << "ERROR: standard exception in\n" << popfile_path << "\nLine: " << line << "\nWhile trying to find province ID.\n";
+				std::cout << "Exception: " << e.what();
+			}
+
 			for (int i = 0; i < provincelist.size(); i++) {
-				if (provincelist[i].id == stoi(identifier)) {
+				if (provincelist[i].id == provinceid) {
 					index = i;
 					provincelist[index].popfile = popfile_path;
 					break;
