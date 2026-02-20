@@ -16,7 +16,7 @@ LIBRARY_PATHS =
 #COMPILER_FLAGS = -Wl,-subsystem,windows
 
 #LINKER_FLAGS specifies the libraries we're linking against
-LINKER_FLAGS = 
+LINKER_FLAGS = -static-libgcc -static-libstdc++ -no-pie
 
 #OBJ_NAME specifies the name of our exectuable
 OBJ_NAME = x64\flowerpopeditor.exe
