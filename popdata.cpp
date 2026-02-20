@@ -2,12 +2,19 @@
 #include"pdxinterpreter.h"
 #include<iostream>
 
-country::country(std::string countrytag) : tag(countrytag) {}
-
-std::vector<pop> adapt_poplist(const std::vector<pop>& poplist_to_adapt, const province& province) {
+std::vector<pop> adapt_poplist(const std::vector<pop>& poplist_to_adapt, const province& province, const country& country) {
 	std::vector<pop> new_poplist = poplist_to_adapt;
 
 	for (int i = 0; i < new_poplist.size(); i++) {
+		if (new_poplist[i].culture == "primary_culture") new_poplist[i].culture = country.GetPrimaryCulture();
+		else if (new_poplist[i].culture == "secondary_culture") {
+			std::vector<std::string> secondarycultures = country.GetSecondaryCultures();
+			if (secondarycultures.empty())new_poplist[i].culture = country.GetPrimaryCulture();
+			else new_poplist[i].culture = secondarycultures[0];
+		}
+
+		if (new_poplist[i].religion == "state_religion") new_poplist[i].religion = country.GetReligion();
+		
 		if (province.mine_not_farm) {
 			if (new_poplist[i].type == "farmer") new_poplist[i].type = "labourer";
 		}
@@ -21,15 +28,35 @@ std::vector<pop> adapt_poplist(const std::vector<pop>& poplist_to_adapt, const p
 	return new_poplist;
 }
 
-std::string country::GetTag() {
-	return tag;
-}
-
 bool ProvinceHasTag(const province& prov, const std::string& tag, bool use_cores) {
 	if (use_cores) {
 		return prov.HasCore(tag);
 	}
 	else return prov.ownertag == tag;
+}
+
+country::country(std::string countrytag) : tag(countrytag) {}
+
+void country::Load(std::string primaryculture, const std::vector<std::string>& secondarycultures, std::string statereligion) {
+	primary_culture = primaryculture;
+	secondary_cultures = secondarycultures;
+	religion = statereligion;
+}
+
+std::string country::GetTag() const {
+	return tag;
+}
+
+std::string country::GetPrimaryCulture() const {
+	return primary_culture;
+}
+
+std::vector<std::string> country::GetSecondaryCultures() const {
+	return secondary_cultures;
+}
+
+std::string country::GetReligion() const {
+	return religion;
 }
 
 int country::GetPopulation(bool use_cores) const {
@@ -50,7 +77,7 @@ void country::ResetPopulation(bool use_cores) {
 				break;
 			}
 		}
-		provincelist[j].ResetPopulation(*usedtemplates[index].poptemplate);
+		provincelist[j].ResetPopulation(*usedtemplates[index].poptemplate, *this);
 	}
 }
 
@@ -74,8 +101,8 @@ bool province::HasCore(const std::string& coretag) const {
 	return false;
 }
 
-void province::ResetPopulation(const poptemplate& target_template) {
-	std::vector<pop> adapted_poplist = adapt_poplist(target_template.poplist, *this);
+void province::ResetPopulation(const poptemplate& target_template, const country& callingcountry) {
+	std::vector<pop> adapted_poplist = adapt_poplist(target_template.poplist, *this, callingcountry);
 	poplist.assign(adapted_poplist.size(), adapted_poplist[0]);
 
 	for (int i = 0; i < adapted_poplist.size(); i++) {

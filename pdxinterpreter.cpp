@@ -1,5 +1,5 @@
 #include"pdxinterpreter.h"
-#include<algorithm>
+//#include<algorithm>
 #include<sstream>
 
 void divide_statement(const std::string& line, std::string& identifier, std::string& token) {

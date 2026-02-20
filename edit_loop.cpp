@@ -39,7 +39,7 @@ void edit_loop() {
 	bool editing = true;
 	while (editing) {
 		
-		cout << "0 - Save pops & close program\n1 - Change templates\n2 - Multiply pops by country\n3 - Edit pops by country\n4 - Multiply pops by core\n5 - Edit pops by core\n6 - Save pops to file\naction: ";
+		cout << "\n0 - Save pops & close program\n1 - Change templates\n2 - Multiply pops by country\n3 - Edit pops by country\n4 - Multiply pops by core\n5 - Edit pops by core\n6 - Save pops to file\naction: ";
 		int action;
 		cin >> action;
 
